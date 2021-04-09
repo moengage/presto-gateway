@@ -1,12 +1,12 @@
 requestRouter:
-  port: 8080
+  port: 8081
   name: prestoRouter
   historySize: 1000
 
 dataStore:
   jdbcUrl: jdbc:mysql://127.0.0.1:3306/prestogateway
   user: root
-  password: root123
+  password: root
   driver: com.mysql.cj.jdbc.Driver
 
 server:
@@ -24,8 +24,13 @@ notifier:
   recipients:
     - prestodev@yourorg.com
 
+pagerduty:
+  integrationKey: a22d1cfc9f6b494bae6452fc31bcb6f3
+
 modules:
   - com.lyft.data.gateway.ha.module.HaGatewayProviderModule
+  - com.lyft.data.gateway.ha.module.ClusterStateListenerModule
+  - com.lyft.data.gateway.ha.module.NotifierModule
 
 managedApps:
   - com.lyft.data.gateway.ha.GatewayManagedApp
