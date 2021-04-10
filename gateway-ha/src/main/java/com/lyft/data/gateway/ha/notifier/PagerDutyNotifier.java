@@ -31,7 +31,7 @@ public class PagerDutyNotifier implements Notifier {
       String content) {
   }
 
-  public void sendPdAlert(String subject, String content){
+  public void sendPdAlert(String subject, String content) {
     Payload payload = Payload.Builder.newBuilder()
         .setSummary(content)
         .setSource("production")
