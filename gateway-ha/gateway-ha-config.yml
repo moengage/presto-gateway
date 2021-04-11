@@ -26,6 +26,8 @@ notifier:
 
 pagerduty:
   integrationKey: a22d1cfc9f6b494bae6452fc31bcb6f3
+  env: dev
+  region: dev
 
 modules:
   - com.lyft.data.gateway.ha.module.HaGatewayProviderModule
@@ -34,11 +36,12 @@ modules:
 
 managedApps:
   - com.lyft.data.gateway.ha.GatewayManagedApp
+  - com.lyft.data.gateway.ha.clustermonitor.ActiveClusterMonitor
 
 # Logging settings.
 logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
-  level: INFO
+  level: DEBUG
 
   # Logger-specific levels.
   loggers:

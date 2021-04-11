@@ -9,7 +9,9 @@ import com.lyft.data.gateway.ha.config.PagerDutyConfiguration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Properties;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class PagerDutyNotifier implements Notifier {
 
   private final Properties props;
@@ -18,12 +20,16 @@ public class PagerDutyNotifier implements Notifier {
   public PagerDutyNotifier(PagerDutyConfiguration pdConfig) {
     this.props = System.getProperties();
     this.props.put("integration_key", pdConfig.getIntegrationKey());
+    this.props.put("env", pdConfig.getEnv());
+    this.props.put("region", pdConfig.getRegion());
   }
 
 
   @Override
   public void sendNotification(String subject, String content) {
-    sendPdAlert("Presto Error: " + subject, content);
+    subject = "Presto Env: " + this.props.get("env") + " ,Region: " + this.props.get("region")
+        + ", Cluster: " + subject;
+    sendPdAlert(subject, content);
   }
 
   @Override
@@ -32,6 +38,7 @@ public class PagerDutyNotifier implements Notifier {
   }
 
   public void sendPdAlert(String subject, String content) {
+    log.info("pagerduty alerts subject: " + subject + "  and content: " + content);
     Payload payload = Payload.Builder.newBuilder()
         .setSummary(content)
         .setSource("production")
@@ -43,7 +50,9 @@ public class PagerDutyNotifier implements Notifier {
         .setDedupKey(subject)
         .build();
     try {
-      pagerDutyEventsClient.trigger(incident);
+      if (this.props.get("env").equals("prod") || this.props.get("env").equals("staging")) {
+        pagerDutyEventsClient.trigger(incident);
+      }
     } catch (NotifyEventException e) {
       e.printStackTrace();
     }
